@@ -1,0 +1,47 @@
+import { EditalStatusEnum } from "../enum/EditalStatusEnum";
+import { EditalTipoIntevaloEnum } from "../enum/EditalTipoIntevaloEnum";
+import { Documento } from "./Documento";
+import { EquipeEdital } from "./EquipeEdital";
+import { Lote } from "./Lote";
+import { Segmento } from "./Segmento";
+import { Solicitacoes } from "./Solicitacoes";
+
+export interface Edital {
+  modalidade: number;
+  amparoLegal: number;
+  origemRecurso: any;
+  convenioRecurso: any;
+  registroPreco: boolean;
+  prazoValidade: any;
+  permitidoCarona: any;
+  numeroProcesso: string;
+  numeroPregao: string;
+  tipoIntervalo: EditalTipoIntevaloEnum;
+  tipoTaxa: boolean;
+  numeroDotacaoOrcamentaria: string;
+  modoDisputa: number;
+  formatoLance: number;
+  dataPublicacaoDiario: string;
+  dataPublicacaoPlataforma: string;
+  dataInicioDisputa: string;
+  dataLimiteImpugnacao: string;
+  preferenciaRegional: boolean;
+  numeroCasasDecimaisLance: number;
+  ordemFase: number;
+  objetoEdital: string;
+  lotes: Lote[];
+  status: EditalStatusEnum;
+  propostas: any[];
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  pregoeiro: EquipeEdital;
+  autoridadeSuperior: EquipeEdital;
+  equipeDeApoio: EquipeEdital[];
+  documentos: Documento[];
+  segmentos: Segmento[];
+  solicitacoes: Solicitacoes[];
+  cidadeEntidade?: string;
+  estadoEntidade?: string;
+  nomeEntidade?: string;
+}

@@ -1,0 +1,65 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
+    "extends": [
+        "react-app",
+        "plugin:react/recommended",
+        // "standard-with-typescript",
+        // "plugin:prettier/recommended",
+        "plugin:react/jsx-runtime"
+    ],
+    "overrides": [{
+        "files": [
+            "*.ts",
+            "*.tsx"
+        ],
+        "rules": {
+            "no-undef": "off"
+        }
+    }
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "sourceType": "module",
+        "project": ["./tsconfig.json"]
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint",
+        "unused-imports"
+        // "prettier"
+    ],
+    "rules": {
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off",
+        "no-unused-vars": "off",
+        // "quotes": ["ignore", "double"],
+        "@typescript-eslint/no-unused-vars": [
+            "error"
+        ],
+        "eqeqeq": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-vars": [
+          "warn",
+          {
+            "vars": "all",
+            "varsIgnorePattern": "^_",
+            "args": "after-used",
+            "argsIgnorePattern": "^_"
+          }
+        ]
+    }
+    
+}
