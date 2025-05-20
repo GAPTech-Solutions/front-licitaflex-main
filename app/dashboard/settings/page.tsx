@@ -1,21 +1,35 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/hooks/use-toast"
-import { Bell, Mail, Smartphone } from "lucide-react"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { Bell, Mail, Smartphone } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function SettingsPage() {
-  const { toast } = useToast()
-  const [activeTab, setActiveTab] = useState("notifications")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("notifications");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   // Notification settings
   const [notificationSettings, setNotificationSettings] = useState({
     email: true,
@@ -26,101 +40,101 @@ export default function SettingsPage() {
     results: true,
     documents: true,
     system: true,
-  })
-  
+  });
+
   // Account settings
   const [accountSettings, setAccountSettings] = useState({
     language: "pt-BR",
     timezone: "America/Sao_Paulo",
     dateFormat: "DD/MM/YYYY",
-  })
-  
+  });
+
   // Security settings
   const [securitySettings, setSecuritySettings] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
     twoFactor: false,
-  })
+  });
 
   const handleNotificationChange = (key: string, value: boolean) => {
     setNotificationSettings((prev) => ({
       ...prev,
       [key]: value,
-    }))
-  }
+    }));
+  };
 
   const handleAccountChange = (key: string, value: string) => {
     setAccountSettings((prev) => ({
       ...prev,
       [key]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSecurityChange = (key: string, value: string | boolean) => {
     setSecuritySettings((prev) => ({
       ...prev,
       [key]: value,
-    }))
-  }
+    }));
+  };
 
   const saveNotificationSettings = () => {
-    setIsSubmitting(true)
-    
+    setIsSubmitting(true);
+
     // Simulate API call
     setTimeout(() => {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       toast({
         title: "Configurações salvas",
         description: "Suas preferências de notificação foram atualizadas com sucesso.",
-      })
-    }, 1000)
-  }
+      });
+    }, 1000);
+  };
 
   const saveAccountSettings = () => {
-    setIsSubmitting(true)
-    
+    setIsSubmitting(true);
+
     // Simulate API call
     setTimeout(() => {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       toast({
         title: "Configurações salvas",
         description: "Suas configurações de conta foram atualizadas com sucesso.",
-      })
-    }, 1000)
-  }
+      });
+    }, 1000);
+  };
 
   const saveSecuritySettings = () => {
-    setIsSubmitting(true)
-    
+    setIsSubmitting(true);
+
     // Validate passwords
     if (securitySettings.newPassword !== securitySettings.confirmPassword) {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       toast({
         title: "Erro",
         description: "As senhas não coincidem. Por favor, verifique e tente novamente.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
-    
+
     // Simulate API call
     setTimeout(() => {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       toast({
         title: "Configurações salvas",
         description: "Suas configurações de segurança foram atualizadas com sucesso.",
-      })
-      
+      });
+
       // Clear password fields
       setSecuritySettings((prev) => ({
         ...prev,
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
-      }))
-    }, 1000)
-  }
+      }));
+    }, 1000);
+  };
 
   return (
     <div className="space-y-6">
@@ -263,8 +277,7 @@ export default function SettingsPage() {
                   <Label htmlFor="language">Idioma</Label>
                   <Select
                     value={accountSettings.language}
-                    onValueChange={(value) => handleAccountChange("language", value)}
-                  >
+                    onValueChange={(value) => handleAccountChange("language", value)}>
                     <SelectTrigger id="language">
                       <SelectValue placeholder="Selecione o idioma" />
                     </SelectTrigger>
@@ -280,8 +293,7 @@ export default function SettingsPage() {
                   <Label htmlFor="timezone">Fuso Horário</Label>
                   <Select
                     value={accountSettings.timezone}
-                    onValueChange={(value) => handleAccountChange("timezone", value)}
-                  >
+                    onValueChange={(value) => handleAccountChange("timezone", value)}>
                     <SelectTrigger id="timezone">
                       <SelectValue placeholder="Selecione o fuso horário" />
                     </SelectTrigger>
@@ -289,4 +301,121 @@ export default function SettingsPage() {
                       <SelectItem value="America/Sao_Paulo">Brasília (GMT-3)</SelectItem>
                       <SelectItem value="America/Manaus">Manaus (GMT-4)</SelectItem>
                       <SelectItem value="America/Rio_Branco">Rio Branco (GMT-5)</SelectItem>
-                      <SelectItem value="America/Noronha">Fernando de Noronha (GMT-2\
+                      <SelectItem value="America/Noronha">Fernando de Noronha (GMT-2)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="dateFormat">Formato de Data</Label>
+                  <Select
+                    value={accountSettings.dateFormat}
+                    onValueChange={(value) => handleAccountChange("dateFormat", value)}>
+                    <SelectTrigger id="dateFormat">
+                      <SelectValue placeholder="Selecione o formato de data" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
+                      <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
+                      <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button onClick={saveAccountSettings} disabled={isSubmitting}>
+                {isSubmitting ? "Salvando..." : "Salvar Configurações"}
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="security" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Segurança</CardTitle>
+              <CardDescription>Gerencie suas configurações de segurança e senha</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Alterar Senha</h3>
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="current-password">Senha Atual</Label>
+                    <div className="relative">
+                      <input
+                        id="current-password"
+                        type={showPassword ? "text" : "password"}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={securitySettings.currentPassword}
+                        onChange={(e) => handleSecurityChange("currentPassword", e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="new-password">Nova Senha</Label>
+                    <div className="relative">
+                      <input
+                        id="new-password"
+                        type={showPassword ? "text" : "password"}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={securitySettings.newPassword}
+                        onChange={(e) => handleSecurityChange("newPassword", e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
+                    <div className="relative">
+                      <input
+                        id="confirm-password"
+                        type={showPassword ? "text" : "password"}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={securitySettings.confirmPassword}
+                        onChange={(e) => handleSecurityChange("confirmPassword", e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="show-password"
+                      checked={showPassword}
+                      onCheckedChange={() => setShowPassword(!showPassword)}
+                    />
+                    <Label htmlFor="show-password">Mostrar senhas</Label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Autenticação de Dois Fatores</h3>
+                <div className="flex items-center justify-between space-x-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="two-factor">Ativar Autenticação de Dois Fatores</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Adicione uma camada extra de segurança à sua conta
+                    </p>
+                  </div>
+                  <Switch
+                    id="two-factor"
+                    checked={securitySettings.twoFactor}
+                    onCheckedChange={(checked) => handleSecurityChange("twoFactor", checked)}
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button onClick={saveSecuritySettings} disabled={isSubmitting}>
+                {isSubmitting ? "Salvando..." : "Salvar Configurações"}
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

@@ -1,12 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+import { useState } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+  LineChart,
+  Line,
+} from "recharts";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
 // Mock data for charts
 const tendersByMonth = [
@@ -22,7 +42,7 @@ const tendersByMonth = [
   { name: "Out", count: 110 },
   { name: "Nov", count: 95 },
   { name: "Dez", count: 85 },
-]
+];
 
 const userRegistrationData = [
   { name: "Jan", citizen: 40, supplier: 24, agency: 10 },
@@ -37,20 +57,20 @@ const userRegistrationData = [
   { name: "Out", citizen: 75, supplier: 70, agency: 25 },
   { name: "Nov", citizen: 85, supplier: 75, agency: 30 },
   { name: "Dez", citizen: 95, supplier: 80, agency: 35 },
-]
+];
 
 const tenderStatusData = [
   { name: "Em andamento", value: 45, color: "#0ea5e9" },
   { name: "Concluídas", value: 30, color: "#22c55e" },
   { name: "Canceladas", value: 15, color: "#ef4444" },
   { name: "Em preparação", value: 10, color: "#f59e0b" },
-]
+];
 
 const tenderCategoryData = [
-  { name: "Obras", value: 35 },
-  { name: "Serviços", value: 40 },
-  { name: "Materiais", value: 25 },
-]
+  { name: "Obras", value: 35, color: "#3b82f6" },
+  { name: "Serviços", value: 40, color: "#10b981" },
+  { name: "Materiais", value: 25, color: "#f59e0b" },
+];
 
 const tenderValueData = [
   { name: "Jan", value: 1200000 },
@@ -65,29 +85,29 @@ const tenderValueData = [
   { name: "Out", value: 2800000 },
   { name: "Nov", value: 3000000 },
   { name: "Dez", value: 3200000 },
-]
+];
+
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 export default function AnalyticsPage() {
-  const [timeRange, setTimeRange] = useState('year')
-  
+  const [timeRange, setTimeRange] = useState("year");
+
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(value)
-  }
-  
+    }).format(value);
+  };
+
   return (
     <div className="container mx-auto py-10">
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Análises</h1>
-            <p className="text-muted-foreground">
-              Visualize estatísticas e tendências do sistema
-            </p>
+            <p className="text-muted-foreground">Visualize estatísticas e tendências do sistema</p>
           </div>
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className="w-[180px]">
@@ -101,68 +121,52 @@ export default function AnalyticsPage() {
             </SelectContent>
           </Select>
         </div>
-        
+
         <Separator />
-        
+
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total de Licitações
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Total de Licitações</CardTitle>
               <CardDescription>Todas as licitações no sistema</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">831</div>
-              <p className="text-xs text-muted-foreground">
-                +16.2% em relação ao período anterior
-              </p>
+              <p className="text-xs text-muted-foreground">+16.2% em relação ao período anterior</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
-                Usuários Registrados
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Usuários Registrados</CardTitle>
               <CardDescription>Total de usuários no sistema</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">2,543</div>
-              <p className="text-xs text-muted-foreground">
-                +12.5% em relação ao período anterior
-              </p>
+              <p className="text-xs text-muted-foreground">+12.5% em relação ao período anterior</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
-                Valor Total
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Valor Total</CardTitle>
               <CardDescription>Valor total das licitações</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">R$ 21.8M</div>
-              <p className="text-xs text-muted-foreground">
-                +22.5% em relação ao período anterior
-              </p>
+              <p className="text-xs text-muted-foreground">+22.5% em relação ao período anterior</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
-                Taxa de Conclusão
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Taxa de Conclusão</CardTitle>
               <CardDescription>Licitações concluídas com sucesso</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">78.2%</div>
-              <p className="text-xs text-muted-foreground">
-                +4.1% em relação ao período anterior
-              </p>
+              <p className="text-xs text-muted-foreground">+4.1% em relação ao período anterior</p>
             </CardContent>
           </Card>
         </div>
-        
+
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList>
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
@@ -170,15 +174,13 @@ export default function AnalyticsPage() {
             <TabsTrigger value="tenders">Licitações</TabsTrigger>
             <TabsTrigger value="financial">Financeiro</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="overview" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader>
                   <CardTitle>Licitações por Mês</CardTitle>
-                  <CardDescription>
-                    Número de licitações criadas por mês
-                  </CardDescription>
+                  <CardDescription>Número de licitações criadas por mês</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[300px]">
@@ -187,20 +189,18 @@ export default function AnalyticsPage() {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
                         <YAxis />
-                        <Tooltip formatter={(value) => [`${value} licitações`, 'Quantidade']} />
+                        <Tooltip formatter={(value) => [`${value} licitações`, "Quantidade"]} />
                         <Bar dataKey="count" fill="#0ea5e9" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardHeader>
                   <CardTitle>Status das Licitações</CardTitle>
-                  <CardDescription>
-                    Distribuição por status atual
-                  </CardDescription>
+                  <CardDescription>Distribuição por status atual</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[300px]">
@@ -214,15 +214,228 @@ export default function AnalyticsPage() {
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                           outerRadius={80}
                           fill="#8884d8"
-                          dataKey="value"
-                        >
+                          dataKey="value">
                           {tenderStatusData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => [`${value} licitações`, 'Let\'s create a loading state for the analytics dashboard:']} />
+                        <Tooltip formatter={(value) => [`${value} licitações`, "Quantidade"]} />
+                        <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
                 </CardContent>
-              </Card>\
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="users" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Registro de Usuários</CardTitle>
+                  <CardDescription>Novos usuários por tipo e por mês</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={userRegistrationData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="citizen" fill="#3b82f6" name="Cidadãos" />
+                        <Bar dataKey="supplier" fill="#10b981" name="Fornecedores" />
+                        <Bar dataKey="agency" fill="#f59e0b" name="Órgãos" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Distribuição de Usuários</CardTitle>
+                  <CardDescription>Proporção de tipos de usuários</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: "Cidadãos", value: 1245 },
+                            { name: "Fornecedores", value: 854 },
+                            { name: "Órgãos Públicos", value: 444 },
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value">
+                          {COLORS.map((color, index) => (
+                            <Cell key={`cell-${index}`} fill={color} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => [`${value} usuários`, "Quantidade"]} />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="tenders" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Categorias de Licitações</CardTitle>
+                  <CardDescription>Distribuição por categoria</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={tenderCategoryData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value">
+                          {tenderCategoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => [`${value} licitações`, "Quantidade"]} />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Licitações por Região</CardTitle>
+                  <CardDescription>Distribuição geográfica das licitações</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px] flex items-center justify-center">
+                    <div className="text-center text-muted-foreground">
+                      <p>Mapa geográfico será implementado aqui</p>
+                      <p className="text-sm">(Integração com biblioteca de mapas)</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="financial" className="space-y-6">
+            <div className="grid gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Valor das Licitações</CardTitle>
+                  <CardDescription>Valor total das licitações por mês (em milhões)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={tenderValueData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis tickFormatter={(value) => `R$ ${value / 1000000}M`} />
+                        <Tooltip
+                          formatter={(value) => [formatCurrency(Number(value)), "Valor"]}
+                          labelFormatter={(label) => `Mês: ${label}`}
+                        />
+                        <Legend />
+                        <Line
+                          type="monotone"
+                          dataKey="value"
+                          stroke="#3b82f6"
+                          strokeWidth={2}
+                          name="Valor Total"
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Médias de Valores</CardTitle>
+                    <CardDescription>Comparativo de valores médios</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[250px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={[
+                            { name: "Obras", value: 450000 },
+                            { name: "Serviços", value: 280000 },
+                            { name: "Materiais", value: 150000 },
+                          ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis tickFormatter={(value) => `R$ ${value / 1000}K`} />
+                          <Tooltip
+                            formatter={(value) => [formatCurrency(Number(value)), "Valor médio"]}
+                          />
+                          <Bar dataKey="value" fill="#10b981" name="Valor Médio" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Economia Gerada</CardTitle>
+                    <CardDescription>Comparativo entre valor estimado e realizado</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[250px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={[
+                            { name: "Jan", estimated: 1500000, actual: 1200000 },
+                            { name: "Fev", estimated: 1200000, actual: 900000 },
+                            { name: "Mar", estimated: 1800000, actual: 1500000 },
+                            { name: "Abr", estimated: 2000000, actual: 1800000 },
+                          ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis tickFormatter={(value) => `R$ ${value / 1000}K`} />
+                          <Tooltip
+                            formatter={(value) => [formatCurrency(Number(value)), "Valor"]}
+                          />
+                          <Legend />
+                          <Bar dataKey="estimated" fill="#f59e0b" name="Estimado" />
+                          <Bar dataKey="actual" fill="#10b981" name="Realizado" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="mt-4 text-sm text-muted-foreground">
+                      Economia média de 18.5% no período
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}
