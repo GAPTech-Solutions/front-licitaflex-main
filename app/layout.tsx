@@ -9,7 +9,7 @@ import { AuthProvider } from "@/lib/supabase/auth-context";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Licitações Brasil",
+  title: "Canal de Compras Brasil",
   description: "Plataforma de licitações públicas do Brasil",
 };
 
