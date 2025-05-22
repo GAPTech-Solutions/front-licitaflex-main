@@ -1,53 +1,85 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Eye, EyeOff } from "lucide-react"
-import { useAuth } from "@/lib/supabase/auth-context"
-import { useToast } from "@/hooks/use-toast"
-import { useSupabaseClient } from "@/lib/supabase/supabase-provider"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/lib/supabase/auth-context";
+import { useToast } from "@/hooks/use-toast";
+import { useSupabaseClient } from "@/lib/supabase/supabase-provider";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { signIn } = useAuth()
-  const { toast } = useToast()
-  const supabase = useSupabaseClient()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectedFrom") || null;
+  const { signIn, session, profile } = useAuth();
+  const { toast } = useToast();
+  const supabase = useSupabaseClient();
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // If already logged in, redirect to appropriate dashboard
+  useEffect(() => {
+    if (session && profile) {
+      redirectToDashboard(profile.profile_type);
+    }
+  }, [session, profile, router]);
+
+  const redirectToDashboard = (profileType: string) => {
+    // Default to citizen if profile type is not available
+    const dashboardPath = profileType ? `/dashboard/${profileType}` : "/dashboard/citizen";
+
+    // If there was a specific page the user was trying to access, go there instead
+    if (redirectTo && redirectTo.startsWith("/dashboard")) {
+      router.push(redirectTo);
+    } else {
+      router.push(dashboardPath);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const { user, session } = await signIn(email, password)
+      const { session, user } = await signIn(email, password);
 
-      if (user && session) {
+      if (session && user) {
         toast({
           title: "Login realizado com sucesso",
           description: "Você será redirecionado para o painel",
-        })
+        });
 
         // Fetch user profile to determine dashboard
-        const { data: profile } = await supabase.from("profiles").select("profile_type").eq("id", user.id).single()
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("profile_type")
+          .eq("id", user.id)
+          .single();
 
         // Redirect to appropriate dashboard based on user role
         if (profile && profile.profile_type) {
-          router.push(`/dashboard/${profile.profile_type}`)
+          redirectToDashboard(profile.profile_type);
         } else {
-          router.push("/dashboard/citizen") // Default dashboard
+          redirectToDashboard("citizen"); // Default dashboard
         }
       }
     } catch (error: any) {
@@ -55,25 +87,27 @@ export default function LoginPage() {
         title: "Erro ao fazer login",
         description: error.message || "Verifique suas credenciais e tente novamente",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         <div className="mb-6 flex justify-center">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-            <img src="/logo.png" alt="Logo" className="h-10" />
+            <img src="/Logo_Canal_de_Compras_vetorizada.png" alt="Logo" className="h-10" />
           </Link>
         </div>
 
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">Entrar</CardTitle>
-            <CardDescription className="text-center">Acesse sua conta para gerenciar licitações</CardDescription>
+            <CardDescription className="text-center">
+              Acesse sua conta para gerenciar licitações
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -91,7 +125,9 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Senha</Label>
-                  <Link href="/forgot-password" className="text-sm font-medium text-primary hover:underline">
+                  <Link
+                    href="/forgot-password"
+                    className="text-sm font-medium text-primary hover:underline">
                     Esqueceu a senha?
                   </Link>
                 </div>
@@ -107,8 +143,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
+                    onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
@@ -121,12 +156,14 @@ export default function LoginPage() {
                 />
                 <Label
                   htmlFor="remember"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                   Lembrar de mim
                 </Label>
               </div>
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90"
+                disabled={isLoading}>
                 {isLoading ? "Entrando..." : "Entrar"}
               </Button>
             </form>
@@ -142,5 +179,5 @@ export default function LoginPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

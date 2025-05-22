@@ -60,7 +60,7 @@ export async function sendNotification({
 // Function to send notifications to multiple users
 export async function sendBulkNotifications(userIds: string[], notification: Omit<SendNotificationParams, "userId">) {
   const supabase = createServerComponentClient({ cookies })
-  const results = { success: 0, failed: 0, errors: [] }
+  const results: { success: number; failed: number; errors: unknown[] } = { success: 0, failed: 0, errors: [] }
 
   try {
     // Create notification objects for each user

@@ -1,42 +1,37 @@
-import type React from "react"
-import { Gabarito, Chakra_Petch } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
-import { AuthProvider } from "@/lib/supabase/auth-context"
-import "./globals.css"
+import type React from "react";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/lib/supabase/auth-context";
 
-const gabarito = Gabarito({
-  subsets: ["latin"],
-  variable: "--font-gabarito",
-  display: "swap",
-})
+const inter = Inter({ subsets: ["latin"] });
 
-const chakraPetch = Chakra_Petch({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-chakra-petch",
-  display: "swap",
-})
-
-export const metadata = {
-  title: "Canal de Compras Brasil",
-  description: "Sistema de compras públicas do Brasil",
-    generator: 'v0.dev'
-}
+export const metadata: Metadata = {
+  title: "Licitações Brasil",
+  description: "Plataforma de licitações públicas do Brasil",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={`${gabarito.variable} ${chakraPetch.variable}`}>
-      <body className={gabarito.className}>
-        <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+    <html lang="pt-BR">
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange>
+          <AuthProvider>
             {children}
-          </ThemeProvider>
-        </AuthProvider>
+            <Toaster />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

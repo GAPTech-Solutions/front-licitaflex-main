@@ -69,16 +69,18 @@ export default function DashboardLayout({
             <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
               <SidebarTrigger />
               <div className="flex flex-1 items-center justify-between">
-                <div className="flex items-center gap-2">{/* Breadcrumb or page title could go here */}</div>
+                <div className="flex items-center gap-2">
+                  {/* Breadcrumb or page title could go here */}
+                </div>
                 <UserNav user={userData} notificationCount={3} onLogout={handleLogout} />
               </div>
             </header>
-            <main className="flex-1">{children}</main>
+            <main className="flex-1  p-4">{children}</main>
           </div>
         </SidebarInset>
       </SidebarProvider>
     </AuthGuard>
-  )
+  );
 }
 
 // Helper function to get user role label

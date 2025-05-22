@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,49 +10,56 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { NotificationSystem } from "@/components/notification-system"
-import { useAuth } from "@/lib/supabase/auth-context"
-import { LogOut, Settings, User } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { NotificationSystem } from "@/components/notification-system";
+import { LogOut, Settings, User } from "lucide-react";
 
-export function UserNav() {
-  const { user, profile, signOut } = useAuth()
+interface UserNavProps {
+  user: {
+    name: string;
+    email: string;
+    role: string;
+    image: string;
+  };
+  notificationCount?: number;
+  onLogout: () => Promise<void>;
+}
 
+export function UserNav({ user, notificationCount = 0, onLogout }: UserNavProps) {
   const getInitials = (name: string) => {
     return name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase()
-      .substring(0, 2)
-  }
+      .substring(0, 2);
+  };
 
   const handleSignOut = async () => {
-    await signOut()
-    window.location.href = "/"
-  }
+    await onLogout();
+  };
 
-  if (!user || !profile) {
-    return null
+  if (!user) {
+    return null;
   }
 
   return (
     <div className="flex items-center gap-4">
-      <NotificationSystem />
+      <NotificationSystem count={notificationCount} />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={profile.avatar_url || ""} alt={profile.name || ""} />
-              <AvatarFallback>{getInitials(profile.name || "User")}</AvatarFallback>
+              <AvatarImage src={user.image || ""} alt={user.name || ""} />
+              <AvatarFallback>{getInitials(user.name || "User")}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{profile.name}</p>
+              <p className="text-sm font-medium leading-none">{user.name}</p>
               <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
             </div>
           </DropdownMenuLabel>
@@ -79,5 +86,5 @@ export function UserNav() {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
+  );
 }
