@@ -33,15 +33,15 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, profile, signOut } = useAuth()
+  const { user, profile, signOut, isLoading } = useAuth()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   // Redirect if not authenticated
-  useEffect(() => {
-    if (!user && !profile) {
-      router.push("/login")
-    }
-  }, [user, profile, router])
+useEffect(() => {
+  if (!isLoading && !user && !profile) {
+    router.push("/login");
+  }
+}, [user, profile, isLoading, router]);
 
   // Get user data
   const userData = {

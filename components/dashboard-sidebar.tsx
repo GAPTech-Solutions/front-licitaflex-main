@@ -56,7 +56,7 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
       <SidebarHeader className="py-4">
         <div className="flex items-center px-2">
           <Link href="/">
-            <Logo className="h-8 w-auto" />
+            <Logo disableLink />
           </Link>
         </div>
       </SidebarHeader>
@@ -89,7 +89,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/citizen/register-supplier")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/citizen/register-supplier")}>
                       <Link href="/dashboard/citizen/register-supplier">
                         <ShoppingBag className="h-4 w-4" />
                         <span>Cadastrar Fornecedor</span>
@@ -97,7 +99,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/citizen/register-agency")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/citizen/register-agency")}>
                       <Link href="/dashboard/citizen/register-agency">
                         <Landmark className="h-4 w-4" />
                         <span>Cadastrar Órgão</span>
@@ -119,7 +123,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/supplier/my-tenders")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/supplier/my-tenders")}>
                       <Link href="/dashboard/supplier/my-tenders">
                         <FileText className="h-4 w-4" />
                         <span>Minhas Licitações</span>
@@ -157,7 +163,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
               {userRole === "agency" && (
                 <>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/agency/create-tender")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/agency/create-tender")}>
                       <Link href="/dashboard/agency/create-tender">
                         <FileText className="h-4 w-4" />
                         <span>Criar Licitação</span>
@@ -165,7 +173,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/agency/active-tenders")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/agency/active-tenders")}>
                       <Link href="/dashboard/agency/active-tenders">
                         <Clock className="h-4 w-4" />
                         <span>Licitações em Andamento</span>
@@ -173,7 +183,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/agency/completed-tenders")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/agency/completed-tenders")}>
                       <Link href="/dashboard/agency/completed-tenders">
                         <CheckCircle className="h-4 w-4" />
                         <span>Licitações Concluídas</span>
@@ -189,7 +201,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/agency/manage-users")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/agency/manage-users")}>
                       <Link href="/dashboard/agency/manage-users">
                         <Users className="h-4 w-4" />
                         <span>Gerenciar Usuários</span>
@@ -219,7 +233,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/admin/active-tenders")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/admin/active-tenders")}>
                       <Link href="/dashboard/admin/active-tenders">
                         <Clock className="h-4 w-4" />
                         <span>Licitações em Andamento</span>
@@ -227,7 +243,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/admin/completed-tenders")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/admin/completed-tenders")}>
                       <Link href="/dashboard/admin/completed-tenders">
                         <CheckCircle className="h-4 w-4" />
                         <span>Licitações Concluídas</span>
@@ -235,7 +253,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/admin/user-activity")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/admin/user-activity")}>
                       <Link href="/dashboard/admin/user-activity">
                         <Activity className="h-4 w-4" />
                         <span>Atividade de Usuários</span>
@@ -320,7 +340,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
               {(userRole === "admin" || userRole === "agency") && (
                 <>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/integrations/brasil/dashboard")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/integrations/brasil/dashboard")}>
                       <Link href="/dashboard/integrations/brasil/dashboard">
                         <BarChart2 className="h-4 w-4" />
                         <span>Dashboard +Brasil</span>
@@ -328,7 +350,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/integrations/brasil/schedule")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/integrations/brasil/schedule")}>
                       <Link href="/dashboard/integrations/brasil/schedule">
                         <Calendar className="h-4 w-4" />
                         <span>Agendamento +Brasil</span>
@@ -336,7 +360,9 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/integrations/brasil/notifications")}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive("/dashboard/integrations/brasil/notifications")}>
                       <Link href="/dashboard/integrations/brasil/notifications">
                         <Bell className="h-4 w-4" />
                         <span>Notificações +Brasil</span>
@@ -375,5 +401,5 @@ export function DashboardSidebar({ userRole = "citizen" }: SidebarNavProps) {
 
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

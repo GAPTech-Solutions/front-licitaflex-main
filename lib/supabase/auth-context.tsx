@@ -33,18 +33,19 @@ export function AuthProvider({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
     const getInitialSession = async () => {
       setIsLoading(true);
-
+  
       try {
         const {
           data: { session },
         } = await supabase.auth.getSession();
-
+  
+        console.log("Initial session:", session);
+  
         setSession(session);
         setUser(session?.user ?? null);
-
+  
         if (session?.user) {
           await fetchProfile(session.user.id);
         }
@@ -54,32 +55,9 @@ export function AuthProvider({
         setIsLoading(false);
       }
     };
-
+  
     getInitialSession();
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session?.user?.email);
-
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        await fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
-      }
-
-      // Force a router refresh to update server components
-      router.refresh();
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [router, supabase]);
+  }, [supabase]);
 
   const fetchProfile = async (userId: string) => {
     try {

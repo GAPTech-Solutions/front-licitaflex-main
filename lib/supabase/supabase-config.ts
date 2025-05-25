@@ -6,8 +6,8 @@ export const supabaseConfig = {
     storageKey: "supabase.auth.token",
     cookieOptions: {
       name: "sb-auth-token",
-      lifetime: 60 * 60 * 24 * 7, 
-      domain: "",
+      lifetime: 60 * 60 * 24 * 7, // 7 dias
+      domain: process.env.NODE_ENV === "production" ? "seu-dominio.com" : "",
       path: "/",
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",

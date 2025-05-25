@@ -1,20 +1,33 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { StepProgress } from "@/components/step-progress"
-import { useToast } from "@/hooks/use-toast"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useAuth } from "@/lib/supabase/auth-context"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { StepProgress } from "@/components/step-progress";
+import { useToast } from "@/hooks/use-toast";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useAuth } from "@/lib/supabase/auth-context";
 import {
   Building2,
   FileText,
@@ -27,33 +40,48 @@ import {
   AlertCircle,
   ChevronRight,
   ChevronLeft,
-} from "lucide-react"
+} from "lucide-react";
+import { useCepLookup } from "@/hooks/use-cep-lookup";
 
 export default function RegisterSupplierPage() {
-  const router = useRouter()
-  const { toast } = useToast()
-  const { user, profile } = useAuth()
-  const supabase = createClientComponentClient()
+  const router = useRouter();
+  const { toast } = useToast();
+  const { user, profile } = useAuth();
+  const supabase = createClientComponentClient();
 
-  const [currentStep, setCurrentStep] = useState(1)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [supplierType, setSupplierType] = useState("national")
-  const [supplyLines, setSupplyLines] = useState<string[]>([])
-  const [representatives, setRepresentatives] = useState<{ name: string; email: string; cpf: string }[]>([
-    { name: "", email: "", cpf: "" },
-  ])
+  const { data: cepData, loading: cepLoading, error: cepError, fetchCep } = useCepLookup();
+
+  useEffect(() => {
+    if (cepData && cepData.logradouro) {
+      setFormData((prev) => ({
+        ...prev,
+        address: `${cepData.logradouro}${cepData.bairro ? ", " + cepData.bairro : ""}${
+          cepData.localidade ? " - " + cepData.localidade : ""
+        }${cepData.uf ? "/" + cepData.uf : ""}`,
+      }));
+    }
+  }, [cepData]);
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [supplierType, setSupplierType] = useState("national");
+  const [supplyLines, setSupplyLines] = useState<string[]>([]);
+  const [representatives, setRepresentatives] = useState<
+    { name: string; email: string; cpf: string }[]
+  >([{ name: "", email: "", cpf: "" }]);
   const [documents, setDocuments] = useState<{
-    socialContract: File | null
-    powerOfAttorney: File | null
-    personalDocument: File | null
-    termsOfAgreement: File | null
+    socialContract: File | null;
+    powerOfAttorney: File | null;
+    personalDocument: File | null;
+    termsOfAgreement: File | null;
   }>({
     socialContract: null,
     powerOfAttorney: null,
     personalDocument: null,
     termsOfAgreement: null,
-  })
+  });
   const [formData, setFormData] = useState({
+    cep: "",
     companyName: "",
     cnpj: "",
     stateRegistration: "",
@@ -63,7 +91,7 @@ export default function RegisterSupplierPage() {
     phone: "",
     website: "",
     foreignRegistrationNumber: "",
-  })
+  });
 
   const steps = [
     { id: 1, name: "Dados Básicos" },
@@ -71,7 +99,7 @@ export default function RegisterSupplierPage() {
     { id: 3, name: "Representantes" },
     { id: 4, name: "Documentos" },
     { id: 5, name: "Revisão" },
-  ]
+  ];
 
   // Format functions
   const formatCNPJ = (value: string) => {
@@ -81,8 +109,8 @@ export default function RegisterSupplierPage() {
       .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
       .replace(/\.(\d{3})(\d)/, ".$1/$2")
       .replace(/(\d{4})(\d)/, "$1-$2")
-      .replace(/(-\d{2})\d+?$/, "$1")
-  }
+      .replace(/(-\d{2})\d+?$/, "$1");
+  };
 
   const formatCPF = (value: string) => {
     return value
@@ -90,93 +118,105 @@ export default function RegisterSupplierPage() {
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d{1,2})/, "$1-$2")
-      .replace(/(-\d{2})\d+?$/, "$1")
-  }
+      .replace(/(-\d{2})\d+?$/, "$1");
+  };
 
   const formatPhone = (value: string) => {
     return value
       .replace(/\D/g, "")
       .replace(/(\d{2})(\d)/, "($1) $2")
       .replace(/(\d{5})(\d)/, "$1-$2")
-      .replace(/(-\d{4})\d+?$/, "$1")
-  }
+      .replace(/(-\d{4})\d+?$/, "$1");
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
 
     if (name === "cnpj") {
-      setFormData({ ...formData, [name]: formatCNPJ(value) })
+      setFormData({ ...formData, [name]: formatCNPJ(value) });
     } else if (name === "phone") {
-      setFormData({ ...formData, [name]: formatPhone(value) })
+      setFormData({ ...formData, [name]: formatPhone(value) });
     } else {
-      setFormData({ ...formData, [name]: value })
+      setFormData({ ...formData, [name]: value });
     }
-  }
+  };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target
-    setFormData({ ...formData, [name]: checked })
-  }
+    const { name, checked } = e.target;
+    setFormData({ ...formData, [name]: checked });
+  };
 
   const handleSupplyLineChange = (value: string) => {
     if (!supplyLines.includes(value)) {
-      setSupplyLines([...supplyLines, value])
+      setSupplyLines([...supplyLines, value]);
     }
-  }
+  };
 
   const removeSupplyLine = (index: number) => {
-    setSupplyLines(supplyLines.filter((_, i) => i !== index))
-  }
+    setSupplyLines(supplyLines.filter((_, i) => i !== index));
+  };
 
   const handleRepresentativeChange = (index: number, field: string, value: string) => {
-    const updatedRepresentatives = [...representatives]
+    const updatedRepresentatives = [...representatives];
     if (field === "cpf") {
-      updatedRepresentatives[index] = { ...updatedRepresentatives[index], [field]: formatCPF(value) }
+      updatedRepresentatives[index] = {
+        ...updatedRepresentatives[index],
+        [field]: formatCPF(value),
+      };
     } else {
-      updatedRepresentatives[index] = { ...updatedRepresentatives[index], [field]: value }
+      updatedRepresentatives[index] = { ...updatedRepresentatives[index], [field]: value };
     }
-    setRepresentatives(updatedRepresentatives)
-  }
+    setRepresentatives(updatedRepresentatives);
+  };
 
   const addRepresentative = () => {
-    setRepresentatives([...representatives, { name: "", email: "", cpf: "" }])
-  }
+    setRepresentatives([...representatives, { name: "", email: "", cpf: "" }]);
+  };
 
   const removeRepresentative = (index: number) => {
     if (representatives.length > 1) {
-      setRepresentatives(representatives.filter((_, i) => i !== index))
+      setRepresentatives(representatives.filter((_, i) => i !== index));
     }
-  }
+  };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, documentType: keyof typeof documents) => {
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    documentType: keyof typeof documents
+  ) => {
     if (e.target.files && e.target.files[0]) {
-      setDocuments({ ...documents, [documentType]: e.target.files[0] })
+      setDocuments({ ...documents, [documentType]: e.target.files[0] });
     }
-  }
+  };
 
   const nextStep = () => {
     if (validateCurrentStep()) {
-      setCurrentStep(currentStep + 1)
-      window.scrollTo(0, 0)
+      setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
     }
-  }
+  };
 
   const prevStep = () => {
-    setCurrentStep(currentStep - 1)
-    window.scrollTo(0, 0)
-  }
+    setCurrentStep(currentStep - 1);
+    window.scrollTo(0, 0);
+  };
 
   const validateCurrentStep = () => {
     switch (currentStep) {
       case 1:
         if (supplierType === "national") {
-          if (!formData.companyName || !formData.cnpj || !formData.address || !formData.email || !formData.phone) {
+          if (
+            !formData.companyName ||
+            !formData.cnpj ||
+            !formData.address ||
+            !formData.email ||
+            !formData.phone
+          ) {
             toast({
               title: "Campos obrigatórios",
               description: "Por favor, preencha todos os campos obrigatórios.",
               variant: "destructive",
-            })
-            return false
+            });
+            return false;
           }
         } else {
           if (
@@ -190,21 +230,21 @@ export default function RegisterSupplierPage() {
               title: "Campos obrigatórios",
               description: "Por favor, preencha todos os campos obrigatórios.",
               variant: "destructive",
-            })
-            return false
+            });
+            return false;
           }
         }
-        return true
+        return true;
       case 2:
         if (supplyLines.length === 0) {
           toast({
             title: "Linhas de fornecimento",
             description: "Por favor, selecione pelo menos uma linha de fornecimento.",
             variant: "destructive",
-          })
-          return false
+          });
+          return false;
         }
-        return true
+        return true;
       case 3:
         for (const rep of representatives) {
           if (!rep.name || !rep.email || !rep.cpf) {
@@ -212,11 +252,11 @@ export default function RegisterSupplierPage() {
               title: "Representantes",
               description: "Por favor, preencha todos os dados dos representantes.",
               variant: "destructive",
-            })
-            return false
+            });
+            return false;
           }
         }
-        return true
+        return true;
       case 4:
         if (
           !documents.socialContract ||
@@ -228,18 +268,18 @@ export default function RegisterSupplierPage() {
             title: "Documentos obrigatórios",
             description: "Por favor, anexe todos os documentos obrigatórios.",
             variant: "destructive",
-          })
-          return false
+          });
+          return false;
         }
-        return true
+        return true;
       default:
-        return true
+        return true;
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     try {
       // In a real app, we would upload the documents to storage
@@ -255,7 +295,9 @@ export default function RegisterSupplierPage() {
         user_id: user?.id,
         company_name: formData.companyName,
         cnpj: formData.cnpj,
-        state_registration: formData.isStateRegistrationExempt ? "ISENTO" : formData.stateRegistration,
+        state_registration: formData.isStateRegistrationExempt
+          ? "ISENTO"
+          : formData.stateRegistration,
         address: formData.address,
         email: formData.email,
         phone: formData.phone,
@@ -265,30 +307,30 @@ export default function RegisterSupplierPage() {
         supply_lines: supplyLines,
         representatives: representatives,
         status: "pending",
-      })
+      });
 
-      if (error) throw error
+      if (error) throw error;
 
       toast({
         title: "Cadastro enviado com sucesso",
         description:
           "Seu cadastro foi enviado para análise. Você receberá uma notificação quando for aprovado ou se forem necessárias correções.",
-      })
+      });
 
       // Redirect to dashboard
       setTimeout(() => {
-        router.push("/dashboard/citizen")
-      }, 2000)
+        router.push("/dashboard/citizen");
+      }, 2000);
     } catch (error: any) {
       toast({
         title: "Erro ao enviar cadastro",
         description: error.message || "Ocorreu um erro ao processar seu cadastro",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -299,8 +341,7 @@ export default function RegisterSupplierPage() {
         </p>
       </div>
 
-      <StepProgress steps={steps} currentStep={currentStep} />
-
+      <StepProgress steps={steps.map((step) => step.name)} currentStep={currentStep} />
       <Card>
         <CardHeader>
           <CardTitle>
@@ -388,7 +429,9 @@ export default function RegisterSupplierPage() {
                               })
                             }
                           />
-                          <Label htmlFor="isStateRegistrationExempt">Isento de Inscrição Estadual</Label>
+                          <Label htmlFor="isStateRegistrationExempt">
+                            Isento de Inscrição Estadual
+                          </Label>
                         </div>
                       </div>
                     </div>
@@ -433,17 +476,35 @@ export default function RegisterSupplierPage() {
                   <Label htmlFor="address">
                     Endereço <span className="text-red-500">*</span>
                   </Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <div className="flex gap-4 w-full">
                     <Input
-                      id="address"
-                      name="address"
-                      placeholder="Endereço completo"
-                      value={formData.address}
-                      onChange={handleChange}
-                      className="pl-10"
+                      id="cep"
+                      name="cep"
+                      placeholder="CEP"
+                      value={formData.cep}
+                      onChange={(e) => {
+                        const cep = e.target.value
+                          .replace(/\D/g, "")
+                          .replace(/^(\d{5})(\d)/, "$1-$2");
+                        setFormData({ ...formData, cep });
+                        if (cep.length === 9) fetchCep(cep);
+                      }}
+                      maxLength={9}
+                      className="w-1/4"
                       required
                     />
+                    <div className="relative  w-3/4">
+                      <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="address"
+                        name="address"
+                        placeholder="Endereço completo"
+                        value={formData.address}
+                        onChange={handleChange}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -539,15 +600,16 @@ export default function RegisterSupplierPage() {
                   {supplyLines.length > 0 ? (
                     <div className="space-y-2">
                       {supplyLines.map((line, index) => (
-                        <div key={index} className="flex items-center justify-between rounded-md border p-3">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between rounded-md border p-3">
                           <span className="text-sm">{getSupplyLineLabel(line)}</span>
                           <Button
                             type="button"
                             variant="ghost"
                             size="sm"
                             onClick={() => removeSupplyLine(index)}
-                            className="h-8 w-8 p-0 text-red-500"
-                          >
+                            className="h-8 w-8 p-0 text-red-500">
                             <span className="sr-only">Remover</span>
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -558,8 +620,7 @@ export default function RegisterSupplierPage() {
                               stroke="currentColor"
                               strokeWidth="2"
                               strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
+                              strokeLinejoin="round">
                               <path d="M18 6 6 18" />
                               <path d="m6 6 12 12" />
                             </svg>
@@ -570,7 +631,8 @@ export default function RegisterSupplierPage() {
                   ) : (
                     <div className="rounded-md border border-dashed p-6 text-center">
                       <p className="text-sm text-muted-foreground">
-                        Nenhuma linha de fornecimento selecionada. Selecione pelo menos uma linha de fornecimento.
+                        Nenhuma linha de fornecimento selecionada. Selecione pelo menos uma linha de
+                        fornecimento.
                       </p>
                     </div>
                   )}
@@ -590,8 +652,7 @@ export default function RegisterSupplierPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => removeRepresentative(index)}
-                          className="text-red-500"
-                        >
+                          className="text-red-500">
                           Remover
                         </Button>
                       )}
@@ -608,7 +669,9 @@ export default function RegisterSupplierPage() {
                             id={`name-${index}`}
                             placeholder="Nome do representante"
                             value={rep.name}
-                            onChange={(e) => handleRepresentativeChange(index, "name", e.target.value)}
+                            onChange={(e) =>
+                              handleRepresentativeChange(index, "name", e.target.value)
+                            }
                             className="pl-10"
                             required
                           />
@@ -640,7 +703,9 @@ export default function RegisterSupplierPage() {
                           type="email"
                           placeholder="email@exemplo.com"
                           value={rep.email}
-                          onChange={(e) => handleRepresentativeChange(index, "email", e.target.value)}
+                          onChange={(e) =>
+                            handleRepresentativeChange(index, "email", e.target.value)
+                          }
                           className="pl-10"
                           required
                         />
@@ -649,7 +714,11 @@ export default function RegisterSupplierPage() {
                   </div>
                 ))}
 
-                <Button type="button" variant="outline" onClick={addRepresentative} className="w-full">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={addRepresentative}
+                  className="w-full">
                   Adicionar Representante
                 </Button>
 
@@ -660,8 +729,8 @@ export default function RegisterSupplierPage() {
                     </div>
                     <div className="ml-3">
                       <p>
-                        Os representantes devem estar previamente cadastrados no sistema. Caso não estejam, um convite
-                        será enviado para o e-mail informado.
+                        Os representantes devem estar previamente cadastrados no sistema. Caso não
+                        estejam, um convite será enviado para o e-mail informado.
                       </p>
                     </div>
                   </div>
@@ -673,7 +742,8 @@ export default function RegisterSupplierPage() {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="socialContract">
-                    Contrato Social (última alteração consolidada) <span className="text-red-500">*</span>
+                    Contrato Social (última alteração consolidada){" "}
+                    <span className="text-red-500">*</span>
                   </Label>
                   <div className="flex items-center gap-2">
                     <Input
@@ -767,9 +837,9 @@ export default function RegisterSupplierPage() {
                     </div>
                     <div className="ml-3">
                       <p>
-                        Após o preenchimento e anexar esses documentos, o cadastro será enviado para análise. Uma vez
-                        não aprovado, o cadastro volta para o usuário com as observações para correção e reenvio até que
-                        seja aprovado.
+                        Após o preenchimento e anexar esses documentos, o cadastro será enviado para
+                        análise. Uma vez não aprovado, o cadastro volta para o usuário com as
+                        observações para correção e reenvio até que seja aprovado.
                       </p>
                     </div>
                   </div>
@@ -783,8 +853,12 @@ export default function RegisterSupplierPage() {
                   <h3 className="mb-4 font-medium">Dados Básicos</h3>
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">Tipo de Fornecedor</p>
-                      <p className="text-sm">{supplierType === "national" ? "Nacional" : "Estrangeiro"}</p>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Tipo de Fornecedor
+                      </p>
+                      <p className="text-sm">
+                        {supplierType === "national" ? "Nacional" : "Estrangeiro"}
+                      </p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Razão Social</p>
@@ -797,15 +871,21 @@ export default function RegisterSupplierPage() {
                           <p className="text-sm">{formData.cnpj}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">Inscrição Estadual</p>
+                          <p className="text-sm font-medium text-muted-foreground">
+                            Inscrição Estadual
+                          </p>
                           <p className="text-sm">
-                            {formData.isStateRegistrationExempt ? "ISENTO" : formData.stateRegistration}
+                            {formData.isStateRegistrationExempt
+                              ? "ISENTO"
+                              : formData.stateRegistration}
                           </p>
                         </div>
                       </>
                     ) : (
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Número de Registro</p>
+                        <p className="text-sm font-medium text-muted-foreground">
+                          Número de Registro
+                        </p>
                         <p className="text-sm">{formData.foreignRegistrationNumber}</p>
                       </div>
                     )}
@@ -865,7 +945,9 @@ export default function RegisterSupplierPage() {
                     </div>
                     <div className="flex items-center gap-2 rounded-md bg-gray-50 p-2">
                       <FileText className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Procuração: {documents.powerOfAttorney?.name || "Não anexado"}</span>
+                      <span className="text-sm">
+                        Procuração: {documents.powerOfAttorney?.name || "Não anexado"}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 rounded-md bg-gray-50 p-2">
                       <FileText className="h-4 w-4 text-primary" />
@@ -885,8 +967,8 @@ export default function RegisterSupplierPage() {
                 <div className="flex items-center space-x-2">
                   <Checkbox id="terms" required />
                   <Label htmlFor="terms" className="text-sm">
-                    Declaro que todas as informações fornecidas são verdadeiras e que estou ciente das responsabilidades
-                    legais decorrentes da falsidade das informações prestadas.
+                    Declaro que todas as informações fornecidas são verdadeiras e que estou ciente
+                    das responsabilidades legais decorrentes da falsidade das informações prestadas.
                   </Label>
                 </div>
               </div>
@@ -900,7 +982,10 @@ export default function RegisterSupplierPage() {
               Voltar
             </Button>
           ) : (
-            <Button type="button" variant="outline" onClick={() => router.push("/dashboard/citizen")}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/dashboard/citizen")}>
               <ChevronLeft className="mr-2 h-4 w-4" />
               Cancelar
             </Button>
@@ -919,7 +1004,7 @@ export default function RegisterSupplierPage() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
 
 // Helper function to get the label for a supply line
@@ -941,7 +1026,7 @@ function getSupplyLineLabel(value: string): string {
     combustiveis: "Combustíveis",
     equipamentos_medicos: "Equipamentos Médicos",
     uniformes: "Uniformes e EPIs",
-  }
+  };
 
-  return supplyLines[value] || value
+  return supplyLines[value] || value;
 }
